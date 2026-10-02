@@ -191,3 +191,6 @@
 
 /* Hardware accelerated cloud animations */
 .cloud-hardware-accelerated { will-change: transform; transform: translateZ(0); }
+
+/* 7-Day Forecast temperature contrast */
+.forecast-bar-gradient { background: linear-gradient(90deg, #38bdf8 0%, #fbbf24 100%); }
