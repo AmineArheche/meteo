@@ -194,3 +194,6 @@
 
 /* 7-Day Forecast temperature contrast */
 .forecast-bar-gradient { background: linear-gradient(90deg, #38bdf8 0%, #fbbf24 100%); }
+
+/* Search bar focus glow */
+.search-focus-glow:focus-within { box-shadow: 0 0 25px rgba(56, 189, 248, 0.25); }
