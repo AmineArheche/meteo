@@ -188,3 +188,6 @@
 
 /* Temperature drop-shadow refinement */
 .temp-display-shadow { text-shadow: 0 4px 20px rgba(0,0,0,0.35); }
+
+/* Hardware accelerated cloud animations */
+.cloud-hardware-accelerated { will-change: transform; transform: translateZ(0); }
