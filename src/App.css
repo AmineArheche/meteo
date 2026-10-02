@@ -201,3 +201,6 @@
 /* Footer attribution text */
 .footer-legal-link { transition: color 0.2s; }
 .footer-legal-link:hover { color: #38bdf8; }
+
+/* Skeleton shimmer speed tuning */
+.skeleton-shimmer-smooth { animation-duration: 1.6s !important; }
