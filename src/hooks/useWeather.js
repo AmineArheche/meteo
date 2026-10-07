@@ -150,6 +150,22 @@ export function useWeather() {
     };
   }, []);
 
+  const fetchWeatherByCoords = async (latitude, longitude) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const locInfo = await reverseGeocode(latitude, longitude);
+      const data = await getWeatherData(latitude, longitude, 'auto', locInfo);
+      setWeatherData(data);
+      setActiveLocation(locInfo);
+    } catch (err) {
+      console.error('Erreur chargement météo par coordonnées:', err);
+      setError("Impossible de charger la météo de ce point.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const refreshWeather = () => {
     if (activeLocation) {
       fetchWeather(activeLocation);
@@ -164,6 +180,7 @@ export function useWeather() {
     toggleUnit,
     activeLocation,
     fetchWeather,
+    fetchWeatherByCoords,
     searchAndFetchCity,
     fetchCurrentLocationWeather,
     refreshWeather,
