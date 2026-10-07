@@ -1,6 +1,17 @@
-// Header.jsx - Barre de navigation supérieure
+// Header.jsx - Barre de navigation supérieure (RainViewer & MyRadar Styling)
 import React from 'react';
-import { CloudSun, Navigation, RefreshCw } from 'lucide-react';
+import {
+  Globe,
+  Radio,
+  Navigation,
+  RefreshCw,
+  CloudRain,
+  Clock,
+  LayoutDashboard,
+  ShieldAlert,
+  Columns,
+  Activity
+} from 'lucide-react';
 
 export default function Header({
   unit,
@@ -8,57 +19,81 @@ export default function Header({
   onCurrentLocation,
   onRefresh,
   loading,
-  lastUpdated
+  lastUpdated,
+  activeTab,
+  onSelectTab,
 }) {
   const formattedTime = lastUpdated
     ? new Date(lastUpdated).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
     : null;
 
+  const tabs = [
+    { id: 'globe', name: 'Globe 3D Terre', icon: Globe, badge: 'NASA 3D' },
+    { id: 'radar', name: 'Radar Doppler Live', icon: Radio, badge: 'Live 100m' },
+    { id: 'nowcast', name: 'Nowcast 120 min', icon: Clock, badge: 'RainViewer' },
+    { id: 'split', name: 'Cockpit Mixte', icon: Columns, badge: 'Pro' },
+    { id: 'dashboard', name: 'Météo & Prévisions', icon: LayoutDashboard },
+    { id: 'alerts', name: 'Alertes & Tempêtes', icon: ShieldAlert, badge: 'MyRadar' },
+  ];
+
   return (
-    <header className="relative z-10 w-full mb-6">
-      <div className="glass-panel rounded-2xl px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
-        {/* Brand / Logo */}
+    <header className="relative z-20 w-full mb-6 space-y-3">
+      {/* Barre Principale */}
+      <div className="glass-panel rounded-3xl px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4 border border-cyan-500/25 bg-slate-950/80 backdrop-blur-2xl shadow-2xl">
+        {/* Brand & Statuts Radar Live */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-sky-500/25 ring-1 ring-white/20">
-            <CloudSun className="w-6 h-6 text-white animate-pulse-slow" />
+          <div className="relative w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/30 ring-1 ring-cyan-400/40">
+            <Radio className="w-6 h-6 text-white animate-pulse" />
+            <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-400 border-2 border-slate-950 animate-ping"></span>
+            <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-400 border-2 border-slate-950"></span>
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-sky-200 bg-clip-text text-transparent font-['Outfit']">
-                AeroCast
+              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white font-['Outfit'] flex items-center gap-1.5">
+                <span>RainRadar</span>
+                <span className="text-cyan-400">Pro</span>
               </h1>
-              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/30">
-                Live
+              <span className="text-[10px] font-mono uppercase font-black tracking-wider px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 hidden sm:inline-block">
+                RainViewer &amp; MyRadar
               </span>
             </div>
-            {formattedTime && (
-              <p className="text-xs text-slate-400">
-                Mis à jour à <span className="text-slate-200 font-medium">{formattedTime}</span>
-              </p>
-            )}
+            <div className="flex items-center gap-2 text-xs text-slate-400">
+              <span className="flex items-center gap-1 text-emerald-400 font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                1200+ Radars Connectés
+              </span>
+              <span>•</span>
+              <span>Résolution 100m</span>
+              {formattedTime && (
+                <>
+                  <span>•</span>
+                  <span>Direct : <strong className="text-slate-200">{formattedTime}</strong></span>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Action Controls */}
-        <div className="flex items-center gap-2.5 sm:gap-3 ml-auto">
-          {/* Geolocation Button */}
+        {/* Contrôles d'action rapide */}
+        <div className="flex items-center gap-2 sm:gap-3 ml-auto">
+          {/* Bouton GPS */}
           <button
             onClick={onCurrentLocation}
-            title="Utiliser ma position GPS actuelle"
+            title="Localiser par GPS"
             disabled={loading}
-            className="glass-pill flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-200 hover:text-white hover:bg-sky-500/20 hover:border-sky-400/40 disabled:opacity-50 transition-all cursor-pointer"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-semibold text-slate-200 bg-slate-900/90 hover:bg-cyan-500/20 hover:text-cyan-300 border border-white/10 hover:border-cyan-400/40 disabled:opacity-50 transition-all cursor-pointer shadow-md"
           >
-            <Navigation className={`w-4 h-4 text-sky-400 ${loading ? 'animate-spin' : ''}`} />
+            <Navigation className={`w-3.5 h-3.5 text-cyan-400 ${loading ? 'animate-spin' : ''}`} />
             <span className="hidden sm:inline">Ma Position</span>
           </button>
 
-          {/* Unit Switcher °C / °F */}
-          <div className="p-1 glass-card rounded-xl flex items-center gap-1">
+          {/* Commutateur d'unité °C / °F */}
+          <div className="p-1 rounded-2xl bg-slate-900/90 border border-white/10 flex items-center gap-1 shadow-md">
             <button
               onClick={() => unit !== 'C' && onToggleUnit()}
-              className={`px-2.5 py-1 text-xs sm:text-sm font-semibold rounded-lg transition-all cursor-pointer ${
+              className={`px-2.5 py-1 text-xs font-bold rounded-xl transition-all cursor-pointer ${
                 unit === 'C'
-                  ? 'bg-sky-500 text-white shadow-md shadow-sky-500/30'
+                  ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/30'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -66,27 +101,60 @@ export default function Header({
             </button>
             <button
               onClick={() => unit !== 'F' && onToggleUnit()}
-              className={`px-2.5 py-1 text-xs sm:text-sm font-semibold rounded-lg transition-all cursor-pointer ${
+              className={`px-2.5 py-1 text-xs font-bold rounded-xl transition-all cursor-pointer ${
                 unit === 'F'
-                  ? 'bg-sky-500 text-white shadow-md shadow-sky-500/30'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/30'
+                : 'text-slate-400 hover:text-white'
               }`}
             >
               °F
             </button>
           </div>
 
-          {/* Refresh Button */}
+          {/* Bouton Rafraîchir */}
           <button
             onClick={onRefresh}
-            title="Rafraîchir les prévisions"
+            title="Rafraîchir les données radar et météo"
             disabled={loading}
-            className="glass-pill p-2 sm:p-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-white/20 disabled:opacity-50 transition-all cursor-pointer"
+            className="p-2.5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white border border-white/10 disabled:opacity-50 transition-all cursor-pointer shadow-md"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-sky-400' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-cyan-400' : ''}`} />
           </button>
         </div>
       </div>
+
+      {/* Barre d'onglets de navigation tactique (RainViewer & MyRadar Views) */}
+      <nav className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none px-1">
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => onSelectTab(tab.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
+                isActive
+                  ? 'bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/30 border border-cyan-300/50'
+                  : 'bg-slate-900/70 hover:bg-slate-800/80 text-slate-300 hover:text-white border border-white/10'
+              }`}
+            >
+              <Icon className={`w-4 h-4 ${isActive ? 'text-slate-950' : 'text-cyan-400'}`} />
+              <span>{tab.name}</span>
+              {tab.badge && (
+                <span
+                  className={`text-[9px] font-mono uppercase px-1.5 py-0.5 rounded-md font-black ${
+                    isActive
+                      ? 'bg-slate-950/20 text-slate-950'
+                      : 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/30'
+                  }`}
+                >
+                  {tab.badge}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </nav>
     </header>
   );
 }
