@@ -39,7 +39,7 @@ export async function fetchRadarMetadata() {
 
     // Combiner frames passées et prévisionnelles
     const allFrames = [
-      ...past.map((frame, index) => ({
+      ...past.map((frame) => ({
         ...frame,
         type: 'past',
         isNowcast: false,

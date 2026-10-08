@@ -17,7 +17,7 @@ import BackgroundEffects from './components/BackgroundEffects';
 import LoadingSkeleton from './components/LoadingSkeleton';
 import ErrorState from './components/ErrorState';
 import Footer from './components/Footer';
-import { AlertCircle, Radio, ShieldAlert } from 'lucide-react';
+import { ShieldAlert } from 'lucide-react';
 
 export default function App() {
   const {

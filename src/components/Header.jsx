@@ -5,12 +5,10 @@ import {
   Radio,
   Navigation,
   RefreshCw,
-  CloudRain,
   Clock,
   LayoutDashboard,
   ShieldAlert,
-  Columns,
-  Activity
+  Columns
 } from 'lucide-react';
 
 export default function Header({

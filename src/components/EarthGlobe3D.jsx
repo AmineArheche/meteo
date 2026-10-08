@@ -8,16 +8,9 @@ import {
   RotateCcw,
   Play,
   Pause,
-  Compass,
-  Navigation,
   Sparkles,
-  Layers,
-  Info,
   Radio,
-  ExternalLink,
-  ChevronRight,
-  Sun,
-  Eye
+  ExternalLink
 } from 'lucide-react';
 
 const NASA_EMBED_URL = 'https://solarsystem.nasa.gov/gltf_embed/2393/';
@@ -40,10 +33,15 @@ export default function EarthGlobe3D({
   const [viewMode, setViewMode] = useState('three'); // 'three' (WebGL interactif météo) ou 'nasa' (Embed GLTF officiel)
   const [autoRotate, setAutoRotate] = useState(true);
   const [rotationSpeed, setRotationSpeed] = useState(0.002);
-  const [showAtmosphere, setShowAtmosphere] = useState(true);
-  const [showClouds, setShowClouds] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [focusedHotspot, setFocusedHotspot] = useState(null);
+
+  const autoRotateRef = useRef(autoRotate);
+  const rotationSpeedRef = useRef(rotationSpeed);
+
+  useEffect(() => {
+    autoRotateRef.current = autoRotate;
+    rotationSpeedRef.current = rotationSpeed;
+  }, [autoRotate, rotationSpeed]);
 
   const canvasContainerRef = useRef(null);
   const rendererRef = useRef(null);
@@ -237,10 +235,10 @@ export default function EarthGlobe3D({
     const animate = () => {
       animFrameIdRef.current = requestAnimationFrame(animate);
 
-      if (autoRotate && earthMeshRef.current && !isDragging) {
-        earthMeshRef.current.rotation.y += rotationSpeed;
+      if (autoRotateRef.current && earthMeshRef.current && !isDragging) {
+        earthMeshRef.current.rotation.y += rotationSpeedRef.current;
         if (cloudsMeshRef.current) {
-          cloudsMeshRef.current.rotation.y += rotationSpeed * 1.15; // Dérive différentielle des nuages
+          cloudsMeshRef.current.rotation.y += rotationSpeedRef.current * 1.15; // Dérive différentielle des nuages
         }
       }
 
@@ -270,7 +268,7 @@ export default function EarthGlobe3D({
       group.remove(group.children[0]);
     }
 
-    const { latitude, longitude, name } = activeLocation;
+    const { latitude, longitude } = activeLocation;
     const pos = latLonToVector3(latitude, longitude, 1.02);
 
     // Marqueur pin balise

@@ -1,8 +1,8 @@
 // RainNowcast.jsx - Module Nowcast Précipitations Hyperlocal 120 min (RainViewer Signature)
 import React, { useState, useMemo } from 'react';
-import { CloudRain, Droplets, Clock, Umbrella, AlertTriangle, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { CloudRain, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
-export default function RainNowcast({ weatherData, activeLocation }) {
+export default function RainNowcast({ weatherData, activeLocation: _activeLocation }) {
   const [selectedMinute, setSelectedMinute] = useState(null);
   const [metricMode, setMetricMode] = useState('dbz'); // 'dbz' ou 'mmh'
 
@@ -11,10 +11,12 @@ export default function RainNowcast({ weatherData, activeLocation }) {
     const currentCode = weatherData?.current?.weatherCode ?? 0;
     const isCurrentlyRaining = [51, 53, 55, 61, 63, 65, 80, 81, 82, 95, 96].includes(currentCode);
     const hourlyProb = weatherData?.hourly?.[0]?.precipProbability ?? (isCurrentlyRaining ? 85 : 15);
+    const baseTime = weatherData?.current?.time
+      ? new Date(weatherData.current.time).getTime()
+      : 1728394800000;
 
-    // 12 points espacés de 10 minutes = 120 minutes
+    // Points espacés de 5 minutes = 120 minutes
     const points = [];
-    const baseRain = isCurrentlyRaining ? 2.5 : hourlyProb > 50 ? 1.2 : 0;
 
     for (let i = 0; i <= 120; i += 5) {
       let intensityFactor = 0;
@@ -23,17 +25,17 @@ export default function RainNowcast({ weatherData, activeLocation }) {
         intensityFactor = Math.max(0, 1 - i / 70 + Math.sin(i / 15) * 0.2);
       } else if (hourlyProb > 40) {
         // Pluie débutant autour de la 20-30ème minute
-        intensityFactor = i >= 20 && i <= 85 ? Math.sin((i - 20) / 65 * Math.PI) * 0.9 : 0;
+        intensityFactor = i >= 20 && i <= 85 ? Math.sin(((i - 20) / 65) * Math.PI) * 0.9 : 0;
       } else {
-        // Pas de pluie ou très faible bruine
-        intensityFactor = Math.random() < 0.05 ? 0.1 : 0;
+        // Temps sec ou très résiduel basé sur probabilité
+        intensityFactor = hourlyProb > 25 && i > 40 && i < 70 ? 0.08 : 0;
       }
 
       const mmh = +(intensityFactor * (isCurrentlyRaining ? 4.5 : 2.8)).toFixed(2);
       // Formule conversion empirique radar Z = 200 * R^1.6 -> dBZ = 10 * log10(200 * R^1.6)
       const dbz = mmh > 0 ? Math.min(65, Math.round(10 * Math.log10(200 * Math.pow(mmh, 1.6)))) : 0;
 
-      const date = new Date(Date.now() + i * 60 * 1000);
+      const date = new Date(baseTime + i * 60 * 1000);
       const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
       points.push({

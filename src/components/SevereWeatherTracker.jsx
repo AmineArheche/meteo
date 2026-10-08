@@ -1,15 +1,9 @@
 // SevereWeatherTracker.jsx - Module de suivi des Alertes Sévères & Tempêtes (MyRadar Signature)
 import React, { useState } from 'react';
 import {
-  AlertTriangle,
   Zap,
   Wind,
-  Compass,
-  Flame,
   ShieldAlert,
-  ExternalLink,
-  ChevronRight,
-  Eye,
   Volume2,
   VolumeX
 } from 'lucide-react';
@@ -90,7 +84,7 @@ const MOCK_STORM_CELLS = [
   },
 ];
 
-export default function SevereWeatherTracker({ activeLocation, onFocusCell }) {
+export default function SevereWeatherTracker({ activeLocation: _activeLocation, onFocusCell: _onFocusCell }) {
   const [selectedTab, setSelectedTab] = useState('alerts'); // 'alerts', 'cells', 'tropical'
   const [isMuted, setIsMuted] = useState(soundAlerts.isMuted());
 

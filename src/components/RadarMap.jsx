@@ -1,5 +1,5 @@
 // RadarMap.jsx - Carte Radar Interactive Haute Définition (RainViewer & MyRadar)
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {
@@ -13,13 +13,8 @@ import {
   Navigation,
   CloudRain,
   Eye,
-  Wind,
-  Thermometer,
   Zap,
-  Info,
-  ChevronRight,
-  Settings2,
-  Compass
+  ChevronRight
 } from 'lucide-react';
 import {
   fetchRadarMetadata,
@@ -75,7 +70,6 @@ const QUICK_HOTSPOTS = [
 export default function RadarMap({
   activeLocation,
   onSelectCoordinates,
-  unit = 'C',
 }) {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
@@ -95,14 +89,57 @@ export default function RadarMap({
   const [activeBaseMap, setActiveBaseMap] = useState('dark');
   const [colorScheme, setColorScheme] = useState(2); // 2 = Universal Doppler
   const [radarOpacity, setRadarOpacity] = useState(0.85);
-  const [smoothRadar, setSmoothRadar] = useState(true);
-  const [showSnow, setShowSnow] = useState(true);
 
   // Inspecteur de point au clic
   const [clickedSpot, setClickedSpot] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
   const [showLayersMenu, setShowLayersMenu] = useState(false);
+
+  // Gestion du clic inspecteur sur la carte
+  const handleMapClick = (lat, lng, map) => {
+    if (clickMarkerRef.current) {
+      clickMarkerRef.current.remove();
+    }
+
+    const simulatedDbz = Math.floor(Math.random() * 38) + 12; // 12 à 50 dBZ
+    const isRaining = simulatedDbz >= 20;
+    const rainRateMm = isRaining ? ((simulatedDbz - 15) * 0.25).toFixed(1) : '0.0';
+
+    const crosshairIcon = L.divIcon({
+      className: 'map-target-reticle',
+      html: `
+        <div class="relative flex items-center justify-center w-8 h-8">
+          <div class="absolute inset-0 border-2 border-cyan-400 rounded-full animate-ping opacity-75"></div>
+          <div class="w-2 h-2 bg-cyan-300 rounded-full shadow-lg shadow-cyan-400"></div>
+          <div class="absolute w-6 h-0.5 bg-cyan-400/80"></div>
+          <div class="absolute h-6 w-0.5 bg-cyan-400/80"></div>
+        </div>
+      `,
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
+    });
+
+    const marker = L.marker([lat, lng], { icon: crosshairIcon }).addTo(map);
+    clickMarkerRef.current = marker;
+
+    setClickedSpot({
+      latitude: lat,
+      longitude: lng,
+      dbz: simulatedDbz,
+      rainRate: rainRateMm,
+      isRaining,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    });
+
+    if (onSelectCoordinates) {
+      onSelectCoordinates(lat, lng);
+    }
+  };
+
+  const handleMapClickRef = useRef(handleMapClick);
+  useEffect(() => {
+    handleMapClickRef.current = handleMapClick;
+  });
 
   // Charger les métadonnées RainViewer
   useEffect(() => {
@@ -152,7 +189,7 @@ export default function RadarMap({
     // Gestion du clic sur la carte (Tap-on-map inspector)
     map.on('click', (e) => {
       const { lat, lng } = e.latlng;
-      handleMapClick(lat, lng, map);
+      handleMapClickRef.current?.(lat, lng, map);
     });
 
     mapInstanceRef.current = map;
@@ -259,8 +296,6 @@ export default function RadarMap({
     activeLayer,
     colorScheme,
     radarOpacity,
-    smoothRadar,
-    showSnow,
   ]);
 
   // Animation de boucle de lecture du Radar
@@ -295,7 +330,7 @@ export default function RadarMap({
         { dLat: 0.28, dLon: -0.74, dbz: 62, speed: '52 km/h', dir: 'ENE', type: 'Supercellule / Grêle' },
       ];
 
-      cells.forEach((cell, idx) => {
+      cells.forEach((cell) => {
         const cLat = lat + cell.dLat;
         const cLon = lon + cell.dLon;
         const stormIcon = L.divIcon({
@@ -325,45 +360,6 @@ export default function RadarMap({
       });
     }
   }, [activeLayer, activeLocation]);
-
-  // Gestion du clic inspecteur sur la carte
-  const handleMapClick = (lat, lng, map) => {
-    // Éliminer ancien marqueur
-    if (clickMarkerRef.current) {
-      clickMarkerRef.current.remove();
-    }
-
-    // Calcul d'une intensité radar estimée pour le spot (effet RainViewer)
-    const simulatedDbz = Math.floor(Math.random() * 38) + 12; // 12 à 50 dBZ
-    const isRaining = simulatedDbz >= 20;
-    const rainRateMm = isRaining ? ((simulatedDbz - 15) * 0.25).toFixed(1) : '0.0';
-
-    const crosshairIcon = L.divIcon({
-      className: 'map-target-reticle',
-      html: `
-        <div class="relative flex items-center justify-center w-8 h-8">
-          <div class="absolute inset-0 border-2 border-cyan-400 rounded-full animate-ping opacity-75"></div>
-          <div class="w-2 h-2 bg-cyan-300 rounded-full shadow-lg shadow-cyan-400"></div>
-          <div class="absolute w-6 h-0.5 bg-cyan-400/80"></div>
-          <div class="absolute h-6 w-0.5 bg-cyan-400/80"></div>
-        </div>
-      `,
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
-    });
-
-    const marker = L.marker([lat, lng], { icon: crosshairIcon }).addTo(map);
-    clickMarkerRef.current = marker;
-
-    setClickedSpot({
-      latitude: lat,
-      longitude: lng,
-      dbz: simulatedDbz,
-      rainRate: rainRateMm,
-      isRaining,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    });
-  };
 
   // Zoom controls
   const handleZoomIn = () => mapInstanceRef.current?.zoomIn();
