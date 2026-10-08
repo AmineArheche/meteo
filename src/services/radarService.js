@@ -117,3 +117,19 @@ function createFallbackRadarData() {
     currentFrameIndex: frames.length - 1,
   };
 }
+
+/**
+ * Précharge en mémoire les tuiles des frames adjacentes pour fluidifier l'animation
+ */
+export function getAdjacentFrameIndices(currentIndex, totalFrames, windowSize = 2) {
+  if (totalFrames <= 0) return [];
+  const indices = [];
+  for (let offset = -windowSize; offset <= windowSize; offset++) {
+    const idx = (currentIndex + offset + totalFrames) % totalFrames;
+    if (!indices.includes(idx)) {
+      indices.push(idx);
+    }
+  }
+  return indices;
+}
+

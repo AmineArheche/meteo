@@ -5,6 +5,7 @@ import {
   DBZ_SCALE,
   getRadarTileTemplate,
   getSatelliteTileTemplate,
+  getAdjacentFrameIndices,
 } from '../src/services/radarService.js';
 
 describe('Radar Service - Palettes & dBZ Scale', () => {
@@ -44,5 +45,13 @@ describe('Radar Service - Tile URL Builder', () => {
     assert.equal(getRadarTileTemplate('', '/path'), '');
     assert.equal(getRadarTileTemplate('https://example.com', ''), '');
     assert.equal(getSatelliteTileTemplate(null, null), '');
+  });
+
+  it('calculates adjacent frame prefetch indices with wraparound', () => {
+    const indices = getAdjacentFrameIndices(5, 10, 2);
+    assert.deepEqual(indices, [3, 4, 5, 6, 7]);
+
+    const wrapIndices = getAdjacentFrameIndices(0, 10, 1);
+    assert.deepEqual(wrapIndices, [9, 0, 1]);
   });
 });
