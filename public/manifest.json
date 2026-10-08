@@ -17,5 +17,21 @@
       "sizes": "512x512",
       "type": "image/svg+xml"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "Radar Doppler Live",
+      "short_name": "Radar",
+      "description": "Accès direct au radar Doppler temps réel",
+      "url": "/?view=radar",
+      "icons": [{ "src": "/vite.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Globe 3D NASA",
+      "short_name": "Globe 3D",
+      "description": "Exploration du globe terrestre 3D",
+      "url": "/?view=globe",
+      "icons": [{ "src": "/vite.svg", "sizes": "192x192" }]
+    }
   ]
 }
