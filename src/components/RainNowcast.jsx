@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { CloudRain, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
-export default function RainNowcast({ weatherData, activeLocation: _activeLocation }) {
+export default function RainNowcast({ weatherData, activeLocation }) {
   const [selectedMinute, setSelectedMinute] = useState(null);
   const [metricMode, setMetricMode] = useState('dbz'); // 'dbz' ou 'mmh'
 
