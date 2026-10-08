@@ -1,6 +1,14 @@
 # Changelog — RainRadar Pro (AmineArheche/meteo)
 
-## [2.0.0] - 2026-10-09
+## [2.1.0-rc1] - 2026-10-08
+### Added
+- **⚙️ GitHub Actions CI/CD Pipeline** : Automatisation du linting, des tests unitaires et du déploiement GitHub Pages (`.github/workflows/`).
+- **🧪 Suite de Tests Unitaires Node.js 22** : 15 tests automatisés couvrant les conversions météo, l'algorithme des tuiles radar RainViewer et le synthétiseur audio.
+- **📱 PWA & Offline Support** : Web App Manifest et Service Worker (`sw.js`) pour mise en cache hors-ligne des tuiles radar et assets.
+- **🔊 Moteur Audio Synthétisé Web Audio API** : Alertes sonores paramétrables pour cellules orageuses et impulsions radar.
+- **📋 Templates GitHub Issues & PR** : Formulaires de signalement de bugs, demandes d'évolutions et checklist de pull request.
+
+## [2.0.0] - 2026-10-07
 ### Added
 - **🌍 Earth 3D Exploration Model** : Intégration du modèle 3D officiel de la NASA (GLTF 2393) et du globe 3D Three.js WebGL avec nuages et halo atmosphérique.
 - **🛰️ RainViewer Doppler Radar** : API de tuiles radar en direct, lecteur d'animation 2h, échelle dBZ officielle et inspecteur ponctuel (*Tap-on-map*).
