@@ -7,11 +7,13 @@ import {
   Compass,
   Flame,
   ShieldAlert,
-  Radio,
   ExternalLink,
   ChevronRight,
-  Eye
+  Eye,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
+import { soundAlerts } from '../services/soundAlerts.js';
 
 const MOCK_SEVERE_ALERTS = [
   {
@@ -90,6 +92,7 @@ const MOCK_STORM_CELLS = [
 
 export default function SevereWeatherTracker({ activeLocation, onFocusCell }) {
   const [selectedTab, setSelectedTab] = useState('alerts'); // 'alerts', 'cells', 'tropical'
+  const [isMuted, setIsMuted] = useState(soundAlerts.isMuted());
 
   return (
     <div className="rounded-3xl p-5 sm:p-6 bg-slate-900/80 backdrop-blur-2xl border border-red-500/20 shadow-2xl space-y-5">
@@ -113,38 +116,70 @@ export default function SevereWeatherTracker({ activeLocation, onFocusCell }) {
           </p>
         </div>
 
-        {/* Onglets de catégories */}
-        <div className="flex items-center bg-slate-800/80 p-1 rounded-2xl border border-white/10 text-xs self-start sm:self-auto">
+        {/* Commandes et Onglets */}
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+          {/* Bouton Sirène Audio Synthétisée */}
           <button
-            onClick={() => setSelectedTab('alerts')}
-            className={`px-3 py-1.5 rounded-xl font-semibold transition-all ${
-              selectedTab === 'alerts'
-                ? 'bg-red-500 text-white shadow-md shadow-red-500/30'
-                : 'text-slate-400 hover:text-white'
+            onClick={() => {
+              const nowMuted = soundAlerts.toggleMute();
+              setIsMuted(nowMuted);
+              if (!nowMuted) {
+                soundAlerts.playSevereWarningBeep();
+              }
+            }}
+            title={isMuted ? 'Activer les alertes sonores' : 'Couper les alertes sonores'}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border text-xs font-semibold transition-all ${
+              !isMuted
+                ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-lg shadow-amber-500/10'
+                : 'bg-slate-800/80 text-slate-400 border-white/10 hover:text-white'
             }`}
           >
-            Vigilances (3)
+            {!isMuted ? (
+              <>
+                <Volume2 className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                <span>Audio Actif</span>
+              </>
+            ) : (
+              <>
+                <VolumeX className="w-3.5 h-3.5 text-slate-400" />
+                <span>Muet</span>
+              </>
+            )}
           </button>
-          <button
-            onClick={() => setSelectedTab('cells')}
-            className={`px-3 py-1.5 rounded-xl font-semibold transition-all ${
-              selectedTab === 'cells'
-                ? 'bg-red-500 text-white shadow-md shadow-red-500/30'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            Cellules Radar (3)
-          </button>
-          <button
-            onClick={() => setSelectedTab('tropical')}
-            className={`px-3 py-1.5 rounded-xl font-semibold transition-all ${
-              selectedTab === 'tropical'
-                ? 'bg-red-500 text-white shadow-md shadow-red-500/30'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            Systèmes Tropicaux
-          </button>
+
+          {/* Onglets de catégories */}
+          <div className="flex items-center bg-slate-800/80 p-1 rounded-2xl border border-white/10 text-xs">
+            <button
+              onClick={() => setSelectedTab('alerts')}
+              className={`px-3 py-1.5 rounded-xl font-semibold transition-all ${
+                selectedTab === 'alerts'
+                  ? 'bg-red-500 text-white shadow-md shadow-red-500/30'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Vigilances (3)
+            </button>
+            <button
+              onClick={() => setSelectedTab('cells')}
+              className={`px-3 py-1.5 rounded-xl font-semibold transition-all ${
+                selectedTab === 'cells'
+                  ? 'bg-red-500 text-white shadow-md shadow-red-500/30'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Cellules Radar (3)
+            </button>
+            <button
+              onClick={() => setSelectedTab('tropical')}
+              className={`px-3 py-1.5 rounded-xl font-semibold transition-all ${
+                selectedTab === 'tropical'
+                  ? 'bg-red-500 text-white shadow-md shadow-red-500/30'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Systèmes Tropicaux
+            </button>
+          </div>
         </div>
       </div>
 
