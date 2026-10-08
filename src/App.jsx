@@ -17,6 +17,7 @@ import BackgroundEffects from './components/BackgroundEffects';
 import LoadingSkeleton from './components/LoadingSkeleton';
 import ErrorState from './components/ErrorState';
 import Footer from './components/Footer';
+import ErrorBoundary from './components/ErrorBoundary';
 import { ShieldAlert } from 'lucide-react';
 
 export default function App() {
@@ -155,65 +156,26 @@ export default function App() {
         ) : loading && !weatherData ? (
           <LoadingSkeleton />
         ) : (
-          <div className="space-y-6">
-            {/* VUE 0 : GLOBE TERRESTRE 3D (NASA Solar System Model & WebGL) */}
-            {activeTab === 'globe' && (
-              <div className="space-y-6 animate-in fade-in duration-300">
-                <EarthGlobe3D
-                  activeLocation={activeLocation}
-                  weatherData={weatherData}
-                  onSelectCity={handleSelectCity}
-                />
-                <RainNowcast
-                  weatherData={weatherData}
-                  activeLocation={activeLocation}
-                />
-              </div>
-            )}
-
-            {/* VUE 1 : RADAR DOPPLER LIVE (RainViewer Core) */}
-            {activeTab === 'radar' && (
-              <div className="space-y-6 animate-in fade-in duration-300">
-                <RadarMap
-                  activeLocation={activeLocation}
-                  onSelectCoordinates={handleMapCoordinateSelect}
-                  unit={unit}
-                />
-                <RainNowcast
-                  weatherData={weatherData}
-                  activeLocation={activeLocation}
-                />
-              </div>
-            )}
-
-            {/* VUE 2 : NOWCAST 120 MIN (RainViewer Signature) */}
-            {activeTab === 'nowcast' && (
-              <div className="space-y-6 animate-in fade-in duration-300">
-                <RainNowcast
-                  weatherData={weatherData}
-                  activeLocation={activeLocation}
-                />
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <RadarMap
+          <ErrorBoundary key={activeTab} fallbackTitle="Une erreur s'est produite lors de l'affichage de cet onglet">
+            <div className="space-y-6">
+              {/* VUE 0 : GLOBE TERRESTRE 3D (NASA Solar System Model & WebGL) */}
+              {activeTab === 'globe' && (
+                <div className="space-y-6 animate-in fade-in duration-300">
+                  <EarthGlobe3D
                     activeLocation={activeLocation}
-                    onSelectCoordinates={handleMapCoordinateSelect}
-                    unit={unit}
+                    weatherData={weatherData}
+                    onSelectCity={handleSelectCity}
                   />
-                  {weatherData && (
-                    <HourlyForecast
-                      hourly={weatherData.hourly}
-                      unit={unit}
-                    />
-                  )}
+                  <RainNowcast
+                    weatherData={weatherData}
+                    activeLocation={activeLocation}
+                  />
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* VUE 3 : COCKPIT SPLIT SCREEN (RainViewer & MyRadar Pro Workstation) */}
-            {activeTab === 'split' && (
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-in fade-in duration-300">
-                {/* Volet gauche : Radar interactif plein écran */}
-                <div className="lg:col-span-7 space-y-4">
+              {/* VUE 1 : RADAR DOPPLER LIVE (RainViewer Core) */}
+              {activeTab === 'radar' && (
+                <div className="space-y-6 animate-in fade-in duration-300">
                   <RadarMap
                     activeLocation={activeLocation}
                     onSelectCoordinates={handleMapCoordinateSelect}
@@ -224,69 +186,110 @@ export default function App() {
                     activeLocation={activeLocation}
                   />
                 </div>
+              )}
 
-                {/* Volet droit : Télémétrie météo et conditions directes */}
-                <div className="lg:col-span-5 space-y-4">
-                  {weatherData && (
-                    <>
-                      <CurrentWeather
-                        weatherData={weatherData}
-                        unit={unit}
-                        isFavorite={isFavorite}
-                        onToggleFavorite={handleToggleFavoriteWithFeedback}
-                      />
-                      <WeatherDetails
-                        current={weatherData.current}
-                        unit={unit}
-                      />
+              {/* VUE 2 : NOWCAST 120 MIN (RainViewer Signature) */}
+              {activeTab === 'nowcast' && (
+                <div className="space-y-6 animate-in fade-in duration-300">
+                  <RainNowcast
+                    weatherData={weatherData}
+                    activeLocation={activeLocation}
+                  />
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <RadarMap
+                      activeLocation={activeLocation}
+                      onSelectCoordinates={handleMapCoordinateSelect}
+                      unit={unit}
+                    />
+                    {weatherData && (
                       <HourlyForecast
                         hourly={weatherData.hourly}
                         unit={unit}
                       />
-                    </>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* VUE 4 : TABLEAU DE BORD MÉTÉO COMPLET */}
-            {activeTab === 'dashboard' && weatherData && (
-              <div className="space-y-6 animate-in fade-in duration-300">
-                <CurrentWeather
-                  weatherData={weatherData}
-                  unit={unit}
-                  isFavorite={isFavorite}
-                  onToggleFavorite={handleToggleFavoriteWithFeedback}
-                />
-                <HourlyForecast
-                  hourly={weatherData.hourly}
-                  unit={unit}
-                />
-                <WeatherDetails
-                  current={weatherData.current}
-                  unit={unit}
-                />
-                <DailyForecast
-                  daily={weatherData.daily}
-                  unit={unit}
-                />
-              </div>
-            )}
+              {/* VUE 3 : COCKPIT SPLIT SCREEN (RainViewer & MyRadar Pro Workstation) */}
+              {activeTab === 'split' && (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-in fade-in duration-300">
+                  {/* Volet gauche : Radar interactif plein écran */}
+                  <div className="lg:col-span-7 space-y-4">
+                    <RadarMap
+                      activeLocation={activeLocation}
+                      onSelectCoordinates={handleMapCoordinateSelect}
+                      unit={unit}
+                    />
+                    <RainNowcast
+                      weatherData={weatherData}
+                      activeLocation={activeLocation}
+                    />
+                  </div>
 
-            {/* VUE 5 : ALERTES & TEMPÊTES (MyRadar Signature) */}
-            {activeTab === 'alerts' && (
-              <div className="space-y-6 animate-in fade-in duration-300">
-                <SevereWeatherTracker
-                  activeLocation={activeLocation}
-                />
-                <RadarMap
-                  activeLocation={activeLocation}
-                  onSelectCoordinates={handleMapCoordinateSelect}
-                  unit={unit}
-                />
-              </div>
-            )}
-          </div>
+                  {/* Volet droit : Télémétrie météo et conditions directes */}
+                  <div className="lg:col-span-5 space-y-4">
+                    {weatherData && (
+                      <>
+                        <CurrentWeather
+                          weatherData={weatherData}
+                          unit={unit}
+                          isFavorite={isFavorite}
+                          onToggleFavorite={handleToggleFavoriteWithFeedback}
+                        />
+                        <WeatherDetails
+                          current={weatherData.current}
+                          unit={unit}
+                        />
+                        <HourlyForecast
+                          hourly={weatherData.hourly}
+                          unit={unit}
+                        />
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* VUE 4 : TABLEAU DE BORD MÉTÉO COMPLET */}
+              {activeTab === 'dashboard' && weatherData && (
+                <div className="space-y-6 animate-in fade-in duration-300">
+                  <CurrentWeather
+                    weatherData={weatherData}
+                    unit={unit}
+                    isFavorite={isFavorite}
+                    onToggleFavorite={handleToggleFavoriteWithFeedback}
+                  />
+                  <HourlyForecast
+                    hourly={weatherData.hourly}
+                    unit={unit}
+                  />
+                  <WeatherDetails
+                    current={weatherData.current}
+                    unit={unit}
+                  />
+                  <DailyForecast
+                    daily={weatherData.daily}
+                    unit={unit}
+                  />
+                </div>
+              )}
+
+              {/* VUE 5 : ALERTES & TEMPÊTES (MyRadar Signature) */}
+              {activeTab === 'alerts' && (
+                <div className="space-y-6 animate-in fade-in duration-300">
+                  <SevereWeatherTracker
+                    activeLocation={activeLocation}
+                  />
+                  <RadarMap
+                    activeLocation={activeLocation}
+                    onSelectCoordinates={handleMapCoordinateSelect}
+                    unit={unit}
+                  />
+                </div>
+              )}
+            </div>
+          </ErrorBoundary>
         )}
       </main>
 

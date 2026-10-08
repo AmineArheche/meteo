@@ -36,10 +36,10 @@ L.Icon.Default.mergeOptions({
 const BASE_MAPS = [
   {
     id: 'dark',
-    name: 'Radar Sombre Haute Précision (Esri Dark)',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-    attribution: '&copy; Esri, HERE, Garmin',
-    maxZoom: 16,
+    name: 'Radar Sombre Haute Précision (CartoDB Dark)',
+    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+    maxZoom: 19,
   },
   {
     id: 'satellite',
@@ -89,6 +89,8 @@ export default function RadarMap({
   const [activeBaseMap, setActiveBaseMap] = useState('dark');
   const [colorScheme, setColorScheme] = useState(2); // 2 = Universal Doppler
   const [radarOpacity, setRadarOpacity] = useState(0.85);
+  const [smoothRadar, setSmoothRadar] = useState(true);
+  const [showSnow, setShowSnow] = useState(true);
 
   // Inspecteur de point au clic
   const [clickedSpot, setClickedSpot] = useState(null);
@@ -161,7 +163,15 @@ export default function RadarMap({
 
   // Initialisation de la carte Leaflet
   useEffect(() => {
-    if (!mapContainerRef.current || mapInstanceRef.current) return;
+    if (!mapContainerRef.current) return;
+
+    if (mapContainerRef.current._leaflet_id) {
+      delete mapContainerRef.current._leaflet_id;
+    }
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.remove();
+      mapInstanceRef.current = null;
+    }
 
     const initialLat = activeLocation?.latitude || 33.5731;
     const initialLon = activeLocation?.longitude || -7.5898;
@@ -195,8 +205,13 @@ export default function RadarMap({
     mapInstanceRef.current = map;
 
     return () => {
-      map.remove();
-      mapInstanceRef.current = null;
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+      if (mapContainerRef.current) {
+        delete mapContainerRef.current._leaflet_id;
+      }
     };
   }, []);
 
@@ -296,6 +311,8 @@ export default function RadarMap({
     activeLayer,
     colorScheme,
     radarOpacity,
+    smoothRadar,
+    showSnow,
   ]);
 
   // Animation de boucle de lecture du Radar
@@ -513,17 +530,37 @@ export default function RadarMap({
             </select>
           </div>
 
-          <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs">
-            <span className="text-slate-400">Opacité radar :</span>
-            <input
-              type="range"
-              min="0.3"
-              max="1"
-              step="0.05"
-              value={radarOpacity}
-              onChange={(e) => setRadarOpacity(parseFloat(e.target.value))}
-              className="w-24 accent-cyan-400"
-            />
+          <div className="pt-2 border-t border-white/10 space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-slate-400">Opacité radar :</span>
+              <input
+                type="range"
+                min="0.3"
+                max="1"
+                step="0.05"
+                value={radarOpacity}
+                onChange={(e) => setRadarOpacity(parseFloat(e.target.value))}
+                className="w-24 accent-cyan-400"
+              />
+            </div>
+            <label className="flex items-center justify-between text-xs text-slate-300 cursor-pointer">
+              <span>Lissage Doppler :</span>
+              <input
+                type="checkbox"
+                checked={smoothRadar}
+                onChange={(e) => setSmoothRadar(e.target.checked)}
+                className="rounded accent-cyan-400"
+              />
+            </label>
+            <label className="flex items-center justify-between text-xs text-slate-300 cursor-pointer">
+              <span>Afficher Neige :</span>
+              <input
+                type="checkbox"
+                checked={showSnow}
+                onChange={(e) => setShowSnow(e.target.checked)}
+                className="rounded accent-cyan-400"
+              />
+            </label>
           </div>
         </div>
       )}
