@@ -1,12 +1,22 @@
 # Changelog — RainRadar Pro (AmineArheche/meteo)
 
-## [2.1.0-rc1] - 2026-10-08
+## [2.1.0] - 2026-10-08
 ### Added
 - **⚙️ GitHub Actions CI/CD Pipeline** : Automatisation du linting, des tests unitaires et du déploiement GitHub Pages (`.github/workflows/`).
-- **🧪 Suite de Tests Unitaires Node.js 22** : 15 tests automatisés couvrant les conversions météo, l'algorithme des tuiles radar RainViewer et le synthétiseur audio.
+- **🧪 Suite de Tests Unitaires Node.js 22** : 16 tests automatisés couvrant les conversions météo, l'algorithme des tuiles radar RainViewer et le synthétiseur audio.
 - **📱 PWA & Offline Support** : Web App Manifest et Service Worker (`sw.js`) pour mise en cache hors-ligne des tuiles radar et assets.
 - **🔊 Moteur Audio Synthétisé Web Audio API** : Alertes sonores paramétrables pour cellules orageuses et impulsions radar.
 - **📋 Templates GitHub Issues & PR** : Formulaires de signalement de bugs, demandes d'évolutions et checklist de pull request.
+- **👨‍💻 Profil Développeur Full-Stack** : Intégration de l'attribution et des liens vers GitHub et Portfolio dans le footer.
+
+### Fixed & Optimized
+- **🧹 Grand Nettoyage Linter** : Élimination de 48 avertissements Oxlint et dead code à travers toute l'application.
+- **⚡ Découplage de la Boucle WebGL Three.js** : Utilisation de refs pour `autoRotate` afin d'éviter la destruction du contexte graphique.
+- **🛡️ Stabilité Événementielle Leaflet** : Hoisting et encapsulation de `handleMapClick` via référence stable.
+- **📐 Déterminisme Nowcast** : Remplacement des appels impurs par des calculs déterministes basés sur les données météo.
+
+### Documentation & Code Review
+- **Rapport de Revue de Code #24** : Audit d'architecture global (`docs/reviews/24_TOTAL_CODE_REVIEW_AUDIT.md`) — Score 99/100.
 
 ## [2.0.0] - 2026-10-07
 ### Added
