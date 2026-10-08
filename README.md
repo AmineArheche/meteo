@@ -45,3 +45,13 @@ npm run dev
 # Compilation de production
 npm run build
 ```
+
+---
+
+## 👨‍💻 Développeur & Auteur
+
+Conçu et développé par **Amine Arheche** — *Full-Stack Web Developer*.
+
+- 🌐 **Portfolio :** [https://aminearheche.github.io/](https://aminearheche.github.io/)
+- 🐙 **GitHub :** [@AmineArheche](https://github.com/AmineArheche)
+- 📦 **Dépôt :** [AmineArheche/meteo](https://github.com/AmineArheche/meteo)
